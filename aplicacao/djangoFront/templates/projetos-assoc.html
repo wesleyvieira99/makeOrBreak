@@ -1,0 +1,33 @@
+<!-- Modal -->
+<div class="modal fade" id="modalAssoc" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLabel" style="font-family: 'Bebas Neue',  cursive;">Associar usuários ao projeto <strong class="nomeProjeto"></strong> </h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close" id="botao-fechar-associar">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <div class="card-body">
+                <form method="post" action="{% url 'usuarioprojetoassociar' %}">
+                    {% csrf_token %}
+                    <input type="hidden" name="project_id" class="project">
+                    <label for="user_select" style="font-family: 'Signika Negative', sans-serif;">Selecione o usuário:</label>
+                    <select id="user_select" name="user_id" class="form-control" style="font-family: 'Signika Negative', sans-serif;">
+                        {% for user in users %}
+                            <option value="{{ user.id }}">{{ user.username }}</option>
+                        {% endfor %}
+                    </select>
+                    <button type="submit" class="btn btn-md btn-primary" style="margin: 5%; font-family: 'Signika Negative', sans-serif;">Associar ao projeto</button>
+                </form>
+
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" style="font-family: 'Signika Negative', sans-serif;" data-dismiss="modal" id="botao-cancelar-associar">Cancelar</button>
+      </div>
+    </div>
+  </div>
+</div>
+

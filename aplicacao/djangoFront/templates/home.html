@@ -1,0 +1,173 @@
+{% extends "index.html" %}
+
+{% block content %}
+
+<div class="col-sm-12 col-sm-12 col-xs-12 col-md-12 col-lg-12" style="padding-bottom: 200px">
+        <div class="row" style="justify-content: left; text-align: left">
+            <h1 style="font-family: 'Bebas Neue', cursive; padding-top: 10px; font-size:3em; justify-content: left; text-align: left">Rodar modelo</h1>
+        </div>
+
+        <div class="row">
+            <div class="col-md-4 col-sm-4 col-xs-4 col-md-4 col-lg-4">
+                <form class="form-group"  action="{% url 'home'  %}" method="post" id="formProjeto">
+                            {% csrf_token %}
+                            <label for="projectselect" style="font-size: 12px; font-family: 'Poppins', sans-serif;">Selecione um <strong>projeto</strong>:</label>
+                            <select id="projectselect" class="form-control" name="project_id">
+                                {% for project in projects %}
+                                    <option value="{{ project.id }}">{{ project.nome }}</option>
+                                {% endfor %}
+                            </select>
+                            <button type="submit" class="btn btn-info" style="padding: 10px; margin-top:15px; font-family: 'Poppins', sans-serif;">Buscar métricas</button>
+                </form>
+
+                {% if projectselected %}
+
+                <div class="card" style="margin-top: 10px;box-shadow: 2px 0px 4px rgba(0, 0, 0, 0.2); border: 1px solid #ddd; border-radius: 15px;">
+                    <div class="card-body bg-primary text-white" style=" background-image: linear-gradient(to right top, #093663, #102a4c, #111f36, #0e1422, #01030d);">
+                        <form class="form-group" action="{% url 'home_prediction' %}" method="post">
+                            {% csrf_token %}
+                            <label for="metricselect" style="font-size: 12px; font-family: 'Poppins', sans-serif;">Selecione uma <strong>métrica</strong>:</label>
+                            <select id="metricselect" class="form-control" name="metrica_id">
+                                {% for metric in metrics %}
+                                    <option value="{{ metric.id }}">{{ metric.nome }}</option>
+                                {% endfor %}
+                            </select>
+
+                            <label for="input-valor-modelo" style="font-size: 12px; font-family: 'Poppins', sans-serif; margin-top: 6px">Informe o <strong>valor</strong></label>
+                            <div class="input-group">
+                                <input type="number" name="valor" class="form-control" min="0" id="input-valor-modelo">
+                                <select name="select-valor-modelo" class="form-control" id="select-valor-modelo">
+                                    <option value="quantidade">Quantidade</option>
+                                    <option value="porcentagem">Porcentagem</option>
+                                </select>
+                            </div>
+
+                            <label for="input-tempo-modelo" style="font-size: 12px; font-family: 'Poppins', sans-serif; margin-top: 6px">Informe o <strong>tempo</strong></label>
+                            <input type="number" name="tempo" class="form-control" min="0" id="input-tempo-modelo" placeholder="em minutos...">
+                            <button type="submit" class="btn btn-success" id="botao-rodar" style="padding: 10px; margin-top:15px; font-family: 'Poppins', sans-serif;">Rodar</button>
+                        </form>
+
+                    </div>
+                </div>
+
+                {% else %}
+
+                <div class="alert alert-info mt-4" role="alert" style="font-family: 'Poppins', sans-serif;font-size:0.7em ">
+                          Selecione um projeto acima antes de realizar uma predição!
+                </div>
+
+                {% endif %}
+            </div>
+            {% if not metrica_id %}
+            <div class="col-md-8 col-sm-8 col-xs-8 col-md-8 col-lg-8" style="padding: 15px;">
+                    <div class="card">
+                        <div class="card-body vw-30" style="box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3), 0 0 8px rgba(128, 128, 128, 0.3); border-radius: 4px; justify-content: center; text-align: center;">
+                                <i class="fa-solid fa-wand-magic-sparkles fa-bounce"></i>
+                                <p style="font-family: 'Poppins', sans-serif;">Para verificar a predição, execute-a ao lado!</p>
+                        </div>
+                </div>
+            </div>
+            {% else %}
+            <div class="col-md-8 col-sm-8 col-xs-8 col-md-8 col-lg-8" style="padding: 15px">
+                <div class="row"  style="justify-content: center; text-align: center">
+                    <div class="card vw-30 " style="overflow-x: auto;box-shadow: 2px 0px 4px rgba(0, 0, 0, 0.2); border: 1px solid #ddd; border-radius: 10px; justify-content: center; text-align: center; width: 80%; max-width: 70%x">
+                        <div class="card-body" style="justify-content: center; text-align: center; ">
+                            <h5 class="card-title" style="font-family: 'Poppins', sans-serif; font-size: 1.2em;">Previsão do modelo</h5>
+                            {% if decisao_prediction == 1 %}
+                            <button type="button" style="font-family: 'Signika Negative', sans-serif;" class="btn btn-md btn-danger" data-bs-toggle="popover" data-bs-title="Popover title" id="popover1" data-bs-content="De acordo com a análise das métricas, o aconselhável pelo modelo é não arriscar!">Recomendado o Rollback!</button>
+                            {% else %}
+                            <button type="button" style="font-family: 'Signika Negative', sans-serif;" class="btn btn-md btn-info" data-bs-toggle="popover" data-bs-title="Popover title" id="popover2" data-bs-content="De acordo com a análise das métricas, é aconselhável seguir em frente com o projeto!">Recomendado seguir adiante!</button>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row" style="justify-content: center; text-align: center; margin-top: 18px">
+                    <div class="card vw-30" style="overflow-x: auto; box-shadow: 2px 0px 4px rgba(0, 0, 0, 0.2); border: 1px solid #ddd; border-radius: 10px; width: 80%; max-width: 70%x">
+                        <div class="card-body" style="justify-content: center; text-align: center; justify-content: center; text-align: center;">
+                            <h5 class="card-title" style="font-family: 'Poppins', sans-serif; font-size: 1.2em;">Acurácia do modelo</h5>
+                            {% if accuracy is not None %}
+                            <p style="font-family: 'Righteous', cursive; font-size:80px; text-align: center;">{{ accuracy }}%</p>
+                            <span class="badge rounded-pill text-bg-secondary" style="font-size: 0.6em; color: black">Para aumentar a acurácia do modelo, forneça-o mais informações</span>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row" style="justify-content: center; text-align: center; margin-top: 18px">
+                    <div class="card" style="overflow-x: auto;box-shadow: 2px 0px 4px rgba(0, 0, 0, 0.2); border: 1px solid #ddd; border-radius: 10px; width: 80%; max-width: 70%x">
+                        <div class="card-body">
+                            <h5 class="card-title" style="font-family: 'Poppins', sans-serif; font-size: 1.2em;">PairPlot - Correlação entre as variáveis</h5>
+                            {% if image_base64 is not None %}
+                            <figure class="figure">
+                                <img src="data:image/png;base64,{{ image_base64 }}"  width="500" height="350" class="card-img-top img-fluid mx-auto d-block" />
+                                <figcaption class="figure-caption">Pairplot.</figcaption>
+                            </figure>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row" style="justify-content: center; text-align: center; margin-top: 18px">
+                    <a type="button" class="btn btn-info" href="{% url 'viewpred' %}" style="width:200px; margin-left:5px; height:80%; font-family: 'Signika Negative', sans-serif; font-size:85%;     background-image: linear-gradient(to right, #240069, #08328c, #0057a9, #007bbf, #3f9ed1);"><i class="fa-solid fa-file-csv"></i> Predições realizadas</a>
+                </div>
+            </div>
+            {% endif %}
+        </div>
+</div>
+
+
+
+
+<script>
+
+
+
+
+          ////////////TREINO VALOR QUANTIDADE OU PORCENTAGEM //////////////
+      const input = document.getElementById('input-valor-modelo');
+      const select = document.getElementById('select-valor-modelo');
+
+      select.addEventListener('change', function() {
+        if (select.value === 'porcentagem') {
+          input.setAttribute('max', '100');
+           input.value = '0';
+        } else {
+          input.removeAttribute('max');
+        }
+      });
+
+      input.addEventListener('input', function() {
+        if (select.value === 'porcentagem') {
+          const value = Math.min(Math.max(input.value, 0), 100);
+          input.value = value;
+        }
+      });
+
+        ///////////////////TREINANDO SPINNER/////////////
+    var spinner = document.getElementById('spinner');
+    var spinnerButton = document.querySelector('[data-bs-toggle="spinner"]');
+
+      spinnerButton.addEventListener('click', function() {
+        var isLoading = spinner.style.display !== 'none';
+
+        spinner.style.display = isLoading ? 'none' : 'inline-block';
+        spinnerButton.style.display = isLoading ? 'inline-block' : 'none';
+        spinnerButton.disabled = isLoading;
+      });
+
+
+
+    ///////////Chamar requisição para home novamente mas com o id do projeto selecionado guardado///////////////
+    const formProjeto = document.querySelector('#formProjeto');
+    const select = document.querySelector('#projectselect');
+
+    formProjeto.addEventListener('submit', (event) => {
+        const selectedProjectId = select.value;
+        const actionUrl = `{% url 'home' 0 %}`.replace('0', selectedProjectId);
+        formProjeto.setAttribute('action', actionUrl);
+    });
+</script>
+
+
+{% endblock %}

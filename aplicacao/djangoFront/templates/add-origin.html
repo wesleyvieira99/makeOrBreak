@@ -1,0 +1,39 @@
+<!-- Modal -->
+<div class="modal fade" id="modalAddOrigin" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLabel" style="font-family: 'Bebas Neue',  cursive;">Cadastrar origem de dados</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close" id="botao-fechar-add-origin">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+            <div class="container-fluid" style="margin-top: 2%; justify-content: center; text-align: center">
+                <h5 style="font-family: 'Bebas Neue', cursive; padding-bottom: 20px; font-size: 1.5em">Cadastrar origem de dados</h5>
+                <div class="card-body" style="justify-content: center; text-align: center; box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3), 0 0 8px rgba(128, 128, 128, 0.3); border-radius: 4px;">
+                    <form action="{% url 'origins' %}" method="post" class="form-group" >
+                        {% csrf_token %}
+                        {% for field in originsForm %}
+                                <div class="form-group" style="padding-bottom: 5px; justify-content: center; text-align: center; left 25%">
+                                    <label for="{{ field.name }}" style="font-family: 'Poppins', sans-serif; font-size: 0.8em">{{ field.label_tag }}</label>
+                                    <input type="text" class="form-control" name="{{ field.name }}" style="justify-content: center; text-align: center" placeholder="Digite aqui">
+                                </div>
+                                {% if field.errors %}
+                                    {% for error in field.errors %}
+                                        <div class="alert alert-danger" role="alert" style="padding-top: 5px">
+                                            <span>{{ error }}</span>
+                                        </div>
+                                    {% endfor %}
+                                {% endif %}
+                        {% endfor %}
+                        <button type="submit" class="btn btn-success" style="font-size: 1em; font-family: 'Poppins', sans-serif;">Cadastrar</button>
+                        <button type="button" class="btn btn-secondary" style="font-family: 'Signika Negative', sans-serif;" data-dismiss="modal" id="botao-cancelar-add-origin">Cancelar</button>
+                    </form>
+                </div>
+            </div>
+      </div>
+    </div>
+  </div>
+</div>
+

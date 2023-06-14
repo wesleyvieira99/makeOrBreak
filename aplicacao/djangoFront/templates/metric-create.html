@@ -1,0 +1,62 @@
+{% extends "index.html" %}
+
+
+{% block content %}
+<div class="card-body">
+    <h5 style="font-family: 'Bebas Neue', cursive; padding-bottom: 20px; font-size: 60px">Criar nova métrica</h5>
+    <form action="{% url 'metric-create' %}" method="post" class="form-group">
+        {% csrf_token %}
+        {% for field in form %}
+            <div class="form-group" style="padding-bottom: 5px">
+                {% if field.name == 'nome' %}
+                    <label for="nome" style="font-family: 'Poppins', sans-serif;">{{ field.label_tag }}</label>
+                    <input type="text" class="form-control" name="nome" placeholder="Digite aqui">
+                {% elif  field.name == 'projeto' %}
+                    <label for="projeto" style="font-family: 'Poppins', sans-serif;">Selecione o projeto:</label>
+                    <select name="projeto" class="form-control">
+                        {% for project in projects %}
+                            <option value="{{ project.id }}">{{ project.nome }}</option>
+                        {% endfor %}
+                    </select>
+                {% elif  field.name == 'origin' %}
+                    <label for="origin" style="font-family: 'Poppins', sans-serif;">Selecione a origem dos dados:</label>
+                    <select name="origin" class="form-control">
+                        {% for o in origins %}
+                            <option value="{{ o.id }}">{{ o.nome }}</option>
+                        {% endfor %}
+                    </select>
+                {% endif %}
+                {% if field.errors %}
+                    {% for error in field.errors %}
+                        <div class="alert alert-danger" role="alert" style="padding-top: 5px">
+                            <span>{{ error }}</span>
+                        </div>
+                    {% endfor %}
+                {% endif %}
+            </div>
+        {% endfor %}
+        <a type="button" class="btn btn-danger" href="{% url 'metricsTrainSelected' %}" style="font-family: 'Poppins', sans-serif; margin-right: 10px;">Cancelar</a>
+        <button type="submit" class="btn btn-success" style="font-family: 'Poppins', sans-serif;">Criar</button>
+        <a type="button" class="btn btn-info" href="{% url 'origins' %}" style="font-family: 'Poppins', sans-serif; margin-left: 10px;">Gestão de origem de dados</a>
+    </form>
+
+</div>
+
+
+<script>
+
+  ///////////////////TREINANDO SPINNER/////////////
+    var spinner = document.getElementById('spinner');
+    var spinnerButton = document.querySelector('[data-bs-toggle="spinner"]');
+
+  spinnerButton.addEventListener('click', function() {
+    var isLoading = spinner.style.display !== 'none';
+
+    spinner.style.display = isLoading ? 'none' : 'inline-block';
+    spinnerButton.style.display = isLoading ? 'inline-block' : 'none';
+    spinnerButton.disabled = isLoading;
+  });
+
+</script>
+
+{% endblock %}

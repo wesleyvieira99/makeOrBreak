@@ -1,0 +1,220 @@
+{% extends "index.html" %}
+
+
+{% block content %}
+
+<div class="col-sm-12 col-xs-12 col-md-12 col-lg-12">
+    <div class="container-fluid" style="margin-top: 2%; justify-content: center; text-align: center">
+
+        <div class="card-body" style="justify-content: center; text-align: center">
+            <h5 style="font-family: 'Bebas Neue', cursive; padding-bottom: 20px; font-size: 60px">Cadastrar Projeto</h5>
+            <form action="{% url 'projetos' %}" method="post" class="form-group" >
+                {% csrf_token %}
+                {% for field in projetosForm %}
+                        <div class="form-group" style="padding-bottom: 5px; justify-content: center; text-align: center">
+                            <label for="{{ field.name }}" style="font-family: 'Poppins', sans-serif;">{{ field.label_tag }}</label>
+                            <input type="text" style="left:25%" class="form-control" name="{{ field.name }}" placeholder="Digite aqui">
+                        </div>
+                        {% if field.errors %}
+                            {% for error in field.errors %}
+                                <div class="alert alert-danger" role="alert" style="padding-top: 5px">
+                                    <span>{{ error }}</span>
+                                </div>
+                            {% endfor %}
+                        {% endif %}
+                {% endfor %}
+                <a type="button" class="btn btn-danger" href="{%url 'home' %}" style="font-family: 'Poppins', sans-serif; margin-right: 10px;">Cancelar</a>
+                <button type="submit" class="btn btn-success" style="font-family: 'Poppins', sans-serif;">Cadastrar</button>
+            </form>
+        </div>
+
+        <div class="card-body">
+
+            <div class="alert alert-warning mb-4" role="alert" style="font-family: 'Poppins', sans-serif;font-size:0.7em ">
+                Usuários somente poderão adicionar e excluir informações de métricas de projetos que estão associdados.
+            </div>
+
+            <table class="table table-striped datatable" style="margin: 0 auto; border-collapse: collapse; overflow-x: auto; padding: 10px; width: 80%; max-width: 1000px;" >
+                        <thead class="thead-dark">
+                            <tr>
+                                <th scope="col" style="font-family: 'Bebas Neue', cursive; font-size: 25px; justify-content: center; text-align: center" >Projeto</th>
+                                <th scope="col" style="font-family: 'Bebas Neue', cursive; font-size: 25px; justify-content: center; text-align: center">Descrição</th>
+                                <th scope="col" style="font-family: 'Bebas Neue', cursive; font-size: 25px; justify-content: center; text-align: center">Ações</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for p in projects %}
+                            <tr style="height: 100%;">
+                                <td style="font-family: 'Signika Negative', sans-serif; font-size: 1.0em; justify-content: center; text-align: center">{{ p.nome }}</td>
+                                <td style="font-family: 'Signika Negative', sans-serif; font-size: 1.0em; justify-content: center; text-align: center">{{ p.descricao }}</td>
+                                <td style="justify-content: center; text-align: center">
+                                    <button type="button" class="btn btn-md btn-primary associar-projeto" style="font-family: 'Signika Negative', sans-serif; width: 50%; height: 2.3em; font-size: 80%; margin: 4px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;" data-toggle="modal" data-target="#modalAssoc" data-id="{{ p.id }}" data-nome="{{ p.nome }}">Incluir usuários</button>
+                                    <button type="button" class="btn btn-md btn-warning retirar-projeto" style="font-family: 'Signika Negative', sans-serif; width: 50%; height: 2.3em; font-size: 80%; margin: 4px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;" data-toggle="modal" data-target="#modalRetirar" data-id="{{ p.id }}" data-nome="{{ p.nome }}"> Retirar usuários </button>
+                                    <button class="btn btn-md btn-danger deletar-projeto" style="font-family: 'Signika Negative', sans-serif; width: 50%; height: 2.3em; font-size: 80%; margin: 4px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;" data-toggle="modal" data-target="#modalDeletarProjeto" data-id="{{ p.id }}"><i class="fa-solid fa-trash "></i> Encerrar projeto</button>
+                                </td>
+                            </tr>
+
+                            {% endfor %}
+                        </tbody>
+                    </table>
+        </div>
+
+    </div>
+</div>
+
+
+
+    {% include 'projetos-assoc.html' %}
+    {% include 'projetos-delete.html' %}
+    {% include 'projetos-retirar.html' %}
+
+
+
+
+<style>
+    .dataTables_wrapper .dataTables_filter {
+        display: none; /* Oculta a barra de input de search do DataTables*/
+    }
+</style>
+
+
+<script>
+
+
+
+
+    /////////////DATA TABLES///////////////
+
+        $(document).ready(function() {
+        $('.datatable').DataTable({
+            "paging": false,
+            "order": [[0, "asc"], [1, "asc"]],
+            "language": {
+                "search": "",
+                "info": "",
+                "infoEmpty": "",
+                "infoFiltered": false,
+                "emptyTable": "Nenhum resultado encontrado"
+            },
+            "columnDefs": [
+                { "orderable": false, "targets": [2] },
+                { "searchable": false, "targets": [2] }
+            ]
+        });
+    });
+
+
+    /////////////ASSOCIAR///////////////
+
+      $(".associar-projeto").click(function() {
+        var id = $(this).data("id");
+        var nome = $(this).data("nome");
+        $("#modalAssoc").find('.project').val(id); // Preenche o valor do campo de projeto selecionado
+        $("#modalAssoc").find('.nomeProjeto').val(nome); // Preenche o valor do campo de projeto selecionado
+        $('.project').hide();
+        $("#modalAssoc").modal('show');
+      });
+
+      $("#botao-fechar-associar").click(function() {
+        $("#modalAssoc").modal('hide');
+      });
+
+      $("#botao-cancelar-associar").click(function() {
+        $("#modalAssoc").modal('hide');
+      });
+
+      /////////////RETIRAR///////////////
+
+      $(".retirar-projeto").click(function() {
+
+          var id = $(this).data("id");
+          $("#modalRetirar").find('.project').val(id);
+          var url = "/consultausuarioprojeto/" + id;
+
+          $.ajax({
+            url: url,
+            type: "GET",
+            dataType: "json",
+            success: function(response) {
+              var selectElement = document.getElementById('userselect');
+              selectElement.innerHTML = '';
+
+              response.forEach(function(user) {
+                var optionElement = document.createElement('option');
+                optionElement.value = user.id;
+                optionElement.textContent = user.username;
+
+                selectElement.appendChild(optionElement);
+              });
+            },
+            error: function(xhr, status, error) {
+              // Manipulando erros, se necessário
+              console.log(error);
+            }
+          });
+
+          $("#modalRetirar").modal('show');
+      });
+
+      $("#botao-fechar-retirar").click(function() {
+        $("#modalRetirar").modal('hide');
+      });
+
+      $("#botao-cancelar-retirar").click(function() {
+        $("#modalRetirar").modal('hide');
+      });
+
+      ////////////ENCERRAR PROJETO//////////////////
+
+       $(".deletar-projeto").click(function() {
+        var id = $(this).data("id");
+        $("#modalDeletarProjeto").data("id", id);
+        $("#modalDeletarProjeto").modal('show');
+      });
+
+
+        $("#botao-cancelar-deletar").click(function() {
+            $("#modalDeletarProjeto").modal('hide');
+         });
+
+
+         $("#botao-fechar-deletar").click(function() {
+            $("#modalDeletarProjeto").modal('hide');
+         });
+
+          $("#botao-deletar").click(function() {
+            var id = $("#modalDeletarProjeto").data("id");
+            $.ajax({
+              url: "/encerrarprojeto/" + id,
+              type: "POST",
+              data: {
+                csrfmiddlewaretoken: "{{ csrf_token }}"
+              },
+              success: function(data) {
+                // Se a requisição for bem sucedida, recarregamos a página
+                 window.location.href = 'projetos?status_toast=sucesso&mensagem_toast=Projeto encerrado com sucesso';
+              },
+              error: function(xhr, status, error) {
+                // Se a requisição falhar, exibimos uma mensagem de erro
+                alert("Não foi possível deletar a métrica. Tente novamente.");
+              }
+            });
+          });
+
+
+           ///////////////////TREINANDO SPINNER/////////////
+    var spinner = document.getElementById('spinner');
+    var spinnerButton = document.querySelector('[data-bs-toggle="spinner"]');
+
+  spinnerButton.addEventListener('click', function() {
+    var isLoading = spinner.style.display !== 'none';
+
+    spinner.style.display = isLoading ? 'none' : 'inline-block';
+    spinnerButton.style.display = isLoading ? 'inline-block' : 'none';
+    spinnerButton.disabled = isLoading;
+  });
+
+</script>
+
+
+{% endblock %}

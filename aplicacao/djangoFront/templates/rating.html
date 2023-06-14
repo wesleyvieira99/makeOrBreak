@@ -1,0 +1,98 @@
+{% extends "index.html" %}
+
+{% block content %}
+
+<div class="row" style="justify-content: left; text-align: left">
+    <h1 style="font-family: 'Bebas Neue', cursive; padding-top: 10px; font-size:3em; justify-content: left; text-align: left">Sugestões e avaliações</h1>
+</div>
+
+<div class="col-sm-4 col-xs-4 col-md-4 col-lg-4" style="margin: 15px">
+
+        <div class="row">
+                <div class="card" style="margin-top: 10px; box-shadow: 2px 0px 4px rgba(0, 0, 0, 0.2); border: 1px solid #ddd; border-radius: 15px;  background-image: linear-gradient(to right top, #093663, #102a4c, #111f36, #0e1422, #01030d);">
+                    <div class="card-body bg-primary text-white" style=" background-image: linear-gradient(to right top, #093663, #102a4c, #111f36, #0e1422, #01030d);">
+                        <form class="form-group" action="{% url 'rating' %}" method="post">
+                            {% csrf_token %}
+                            <div class="row" style="justify-content: center; text-align: center">
+                                <label for="rating_user" style="font-size: 12px; font-family: 'Poppins', sans-serif;"><strong>Mensagem do usuário: </strong>{{ user_name }}</label>
+                                <input type="hidden" value="{{ user_id }}" name="rating_user" class="form-control" min="0" id="rating_user">
+                            </div>
+                            <div class="row" style="justify-content: center; text-align: center">
+                                <label for="rating_message" style="font-size: 12px; font-family: 'Poppins', sans-serif; margin-top: 6px">Digite sua <strong>mensagem</strong></label>
+                                <textarea name="rating_message" id="rating_message"></textarea>
+                            </div>
+                            <div class="row mt-2" style="justify-content: center; text-align: center">
+                                <button type="submit" class="btn btn-info" id="botao-rodar" style="padding: 10px; margin-top:15px; font-family: 'Poppins', sans-serif; width: 50px"><i class="fa-solid fa-square-envelope fa-fade" style="font-size:2em"></i></button>
+                            </div>
+                        </form>
+
+                    </div>
+                </div>
+        </div>
+</div>
+
+<div class="col-sm-7 col-xs-7 col-md-7 col-lg-7" style="padding-bottom: 200px;">
+
+    <div class="container-fluid mt-1" style="">
+        <div class="pagination">
+            {% if ratings_paginadas.has_previous %}
+            <a href="?pagina={{ ratings_paginadas.previous_page_number }}" class="btn btn-outline-warning" style="margin-right: 15px;"><i class="fa-solid fa-backward fa-fade"></i></a>
+            {% endif %}
+
+            {% if ratings_paginadas.has_next %}
+            <a href="?pagina={{ ratings_paginadas.next_page_number }}" class="btn btn-outline-info"><i class="fa-solid fa-forward fa-bounce"></i></a>
+            {% endif %}
+
+            <span class="badge text-bg-primary current-page" style="margin-left: 5%; justify-content: center; text-align: center; font-family: font-family: 'Poppins', sans-serif; padding-top: 10px; color: black; font-size:0.7em">Página atual: {{ ratings_paginadas.number }} de {{ ratings_paginadas.paginator.num_pages }}</span>
+        </div>
+    </div>
+
+        {% for i in ratings_paginadas %}
+
+        <div class="row">
+            <div class="container-fluid mt-1" style="">
+                <div class="card" style="margin-top: 15px; box-shadow: 4px 2px 8px rgba(0, 0, 0, 0.4); border: 1px solid #ddd; border-radius: 15px;">
+                        <div class="card-body bg-primary text-white" style="border-radius: 15px;  background-image: linear-gradient(to right bottom, #0d0744, #0d0a50, #0e0c5d, #0e0e6b, #0e1078, #0b1f86, #062d93, #003aa0, #0f52ab, #2c69b4, #4a7fba, #6994be);">
+                            <div class="row" style="justify-content: left; text-align: left">
+                                <h2 style="font-family: 'Bebas Neue', cursive;">{{ i.user.username }}</h2>
+                            </div>
+                            <div class="row" style="justify-content: left; text-align: left">
+                                <p style="font-family: 'Poppins', sans-serif;">{{i.comment}}</p>
+                            </div>
+                            <div class="row" style="justify-content: right; text-align: right; margin-right:10px">
+                                {% if request.user.username ==  i.user.username %}
+                                <a type="button" class="btn btn-danger" href="{% url 'rating_exclude' i.id %}" style="box-shadow: 2px 0px 4px rgba(0, 0, 0, 0.2);width:45px; height:80%; font-family: 'Signika Negative', sans-serif; font-size:85%;"><i class="fa-sharp fa-solid fa-trash"></i></a>
+                                {% endif %}
+                            </div>
+                        </div>
+
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+</div>
+
+
+<script>
+
+
+
+
+
+
+        ///////////////////TREINANDO SPINNER/////////////
+    var spinner = document.getElementById('spinner');
+    var spinnerButton = document.querySelector('[data-bs-toggle="spinner"]');
+
+      spinnerButton.addEventListener('click', function() {
+        var isLoading = spinner.style.display !== 'none';
+
+        spinner.style.display = isLoading ? 'none' : 'inline-block';
+        spinnerButton.style.display = isLoading ? 'inline-block' : 'none';
+        spinnerButton.disabled = isLoading;
+      });
+
+</script>
+
+
+{% endblock %}

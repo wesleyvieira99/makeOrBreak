@@ -1,0 +1,49 @@
+<!-- Modal -->
+<div class="modal fade" id="modalCSV" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLabel" style="font-family: 'Bebas Neue',  cursive;">Adicionar dados massivamente à uma métrica</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close" id="botao-fechar-csv">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <div class="card" style="width: 80%; justify-content: center; text-align: center; margin-left: 12%; margin-top: 10%">
+                <div class="alert alert-warning" role="alert">
+                    Só serão aceitos arquivos CSV com valores numéricos e contendo cabeçalho na seguinte ordem: <strong>valor, decisao, tempo</strong>.
+                </div>
+                <div class="card-body" style="width: 90%; justify-content: center; text-align: center;">
+                <form action="{% url 'upload_csv' %}" method="post" enctype="multipart/form-data" style="justify-content: center; text-align: center;">
+                  {% csrf_token %}
+                  <div class="form-group">
+                    <label for="csv_file" style="font-size: 12px; font-family: 'Poppins', sans-serif;">Arquivo CSV:</label>
+                    <input type="file" name="csv_file" accept=".csv" style="font-size: 12px; font-family: 'Poppins', sans-serif;">
+                  </div>
+                  <div class="form-group">
+                      <label for="metricselect" style="font-size: 12px; font-family: 'Poppins', sans-serif;">Selecione a métrica que deseja envia informações</label>
+                      <select id="metricselect" class="form-control" name="metrica_id">
+                          {% for metric in metrics %}
+                          <option value="{{ metric.id }}">{{ metric.nome }}</option>
+                          {% endfor %}
+                      </select>
+                  </div>
+                  <div class="form-group">
+                      <label for="delimiter" style="font-size: 12px; font-family: 'Poppins', sans-serif;">Qual é o delimitador do CSV?</label>
+                      <select id="delimiter" class="form-control" name="delimiter">
+                          <option value="virgula">Vírgula (,)</option>
+                          <option value="pontoevirgula">Ponto e Vírgula (;)</option>
+                      </select>
+                  </div>
+                  <button class="btn btn-info" type="submit" id="informar_csv" style="font-family: 'Poppins', sans-serif;">Enviar</button>
+                </form>
+            </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal" id="botao-cancelar-csv" style="font-family: 'Poppins', sans-serif;">Cancelar</button>
+      </div>
+    </div>
+  </div>
+</div>
+

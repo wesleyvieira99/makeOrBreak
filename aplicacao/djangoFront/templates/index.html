@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="en" class="vh-100 vw-100">
+<head>
+  {% load static %}
+  <link rel="shortcut icon" type="image/x-icon" href="{% static 'images/favicon.ico' %}">
+  <link rel="stylesheet" href="{% static 'css/styles.css' %}">
+  <title>Make or Brake</title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <!-- fontawesome -->
+    <script src="https://kit.fontawesome.com/a9a5c39036.js" crossorigin="anonymous"></script>
+
+    <!-- GOOGLE FONTS -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Josefin+Sans&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Signika+Negative&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Righteous&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&display=swap" rel="stylesheet">
+
+    <!-- jquery -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+    <!-- bootstrap -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
+
+
+    <!-- toastr -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css" />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
+
+    <!-- plotly -->
+    <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+
+    <!-- DataTables -->
+    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.11.1/css/jquery.dataTables.min.css">
+    <script src="https://cdn.datatables.net/1.11.1/js/jquery.dataTables.min.js"></script>
+
+
+</head>
+<body class="vh-100 vw-100">
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top flex-fill" style=" background-image: linear-gradient(to right top, #010305, #000c20, #001137, #00134c, #000c5c); ">
+        <a class="navbar-brand" href="/home" style="font-family: 'Bebas Neue', cursive;">Make or Break</a>
+         <p style="font-family: 'Poppins', sans-serif; font-size: 12px; color: white; margin-top: 12px">Que bom te ver, <strong>{{ nome_usuario }}!</strong>!</p>
+
+
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+          <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse justify-content-end" id="navbarNav">
+          <ul class="navbar-nav">
+            <li class="nav-item">
+              <a href="{% url 'metric-train' %}" class="btn btn-light m-1 " style="font-family: 'Bebas Neue', cursive;    background-image: linear-gradient(to left top, #2458eb, #647bf0, #909ef2, #b9c2f2, #e3e5f0);"> <i class="fa-solid fa-gear fa-spin-pulse" style="margin-right: 0.4em"></i> Gestão de métricas</a>
+            </li>
+            <li class="nav-item">
+              <a href="{% url 'home' %}" class="btn btn-info m-1" style="font-family: 'Bebas Neue', cursive; background-image: linear-gradient(to left top, #040439, #22275f, #424888, #636cb3, #8492e0);"><i class="fa-solid fa-play fa-fade" style="margin-right: 0.4em"></i> Rodar modelo</a>
+            </li>
+            {% if user.is_staff %}
+                <li class="nav-item">
+                  <a href="{% url 'admin_users' %}" class="btn btn-info m-1" style="font-family: 'Bebas Neue', cursive;  background-image: linear-gradient(to right, #004248, #005a6d, #007297, #0088c5, #009df2);"><i class="fa-solid fa-users" style="margin-right: 0.4em"></i> Usuários </a>
+                </li>
+                <li class="nav-item">
+                  <a href="{% url 'projetos' %}" class="btn btn-success m-1" style="font-family: 'Bebas Neue', cursive;  background-image: linear-gradient(to right top, #032a12, #002a26, #00283f, #002352, #07134f);"><i class="fa-solid fa-plus fa-fade" style="margin-right: 0.4em"></i> Projetos </a>
+                </li>
+            {% endif %}
+            <li class="nav-item" style="">
+              <a href="{% url 'sair' %}" class="btn btn-danger m-1 " style="font-family: 'Bebas Neue', cursive;  background-image: linear-gradient(to left top, #aa0505, #a1002e, #86004c, #5a0061, #031369);"> <i class="fa-solid fa-door-open" style="margin-right: 0.4em; color: white; "></i> Sair</a>
+            </li>
+          </ul>
+
+        </div>
+  </nav>
+  <div class="container-fluid mt-5 vh-100">
+    <div class="row pt-3 bg-secondary text-white shadow-lg" style="justify-content: center; text-align: center;  background-image: linear-gradient(to right top, #093663, #102a4c, #111f36, #0e1422, #01030d);">
+      <div class="col-sm-10 col-xs-10 col-md-10 col-lg-10 pt-2 mb-2 h-25" style="justify-content: center; text-align: center; overflow: hidden">
+            <div class="row">
+                    <form action="{% url 'train_model' %}" method="POST">
+                        {% csrf_token %}
+                        <button type="submit" class="btn btn-outline-info btn-lg btn-md btn-sm btn-xs" style="font-family: 'Signika Negative', sans-serif; font-size: 100%;justify-content: center; text-align: center;" data-bs-toggle="spinner" data-bs-target="#spinner">Clique aqui e treine o modelo!</button>
+                        <button class="btn btn-info btn-lg btn-md btn-sm btn-xs" type="button" role="status" id="spinner"  disabled style="display: none; width:8em; height: 3em">
+                            <i class="fa-solid fa-circle-notch fa-spin" style="color: #ffffff; "></i>
+                            <p style="font-family: 'Poppins', sans-serif; font-size: 0.8em">Treinando...</p>
+                        </button>
+                    </form>
+            </div>
+      </div>
+
+        <div class="col-sm-2 col-xs-2 col-md-2 col-lg-2 pt-2 h-25 " style="overflow: hidden; justify-content: center ;text-align: center;  ">
+            <a href="https://www.linkedin.com/in/admvieira/"><i class="fa-brands fa-linkedin-in" style="color: #ffffff;padding-top: 10px; padding-left: 8px; font-size: 25px"></i></a>
+            <a href="https://github.com/wesleyvieira99/"><i class="fa-brands fa-github" style="color: #ffffff;padding-top: 10px; padding-left: 8px; font-size: 25px" ></i></a>
+        </div>
+    </div>
+
+    <div class="row pt-2" style="margin-bottom: 8%">
+      {% block content %}{% endblock %}
+    </div>
+
+  </div>
+      <footer class="row pt-2 bg-secondary text-white shadow-lg" style="height: 3em;justify-content: center; text-align: center; background-image: linear-gradient(to bottom, #1e1e1e, #333333);  padding-right: 8px; position: fixed; width: 100%; bottom: 0; margin: auto;">
+          <a type="button" class="btn btn-info" href="{% url 'rating' %}" style="width:200px; height:80%; font-family: 'Signika Negative', sans-serif; font-size:85%;   background-image: linear-gradient(to left top, #080633, #07175b, #0c2487, #1432b5, #2040e5);"> Sugestões e avaliações</a>
+          <a type="button" class="btn btn-info" href="{% url 'viewtrain' %}" style="width:200px; margin-left:5px; height:80%; font-family: 'Signika Negative', sans-serif; font-size:85%;    background-image: linear-gradient(to right top, #011f4c, #024276, #0069a0, #0093c9, #12bff0);"><i class="fa-solid fa-file-csv"></i> Treinos realizados</a>
+      </footer>
+</body>
+
+    {% include 'modalSucesso.html' %}
+    {% include 'modalErro.html' %}
+    {% include 'modalWarning.html' %}
+
+<script>
+
+const urlParams = new URLSearchParams(window.location.search)
+const status_toast = urlParams.get('status_toast');
+const mensagem_toast = new URLSearchParams(window.location.search).get('mensagem_toast');
+
+    //////////////MODAL SUCESSO////////////////
+    if (status_toast == 'sucesso') {
+      $("#modalSucesso .modal-dialog .modal-content .modal-body p").text(mensagem_toast);
+      $(document).ready(function(){
+
+            $("#modalSucesso").modal('show');
+
+            $("#botao-fechar-sucesso").click(function() {
+            $("#modalSucesso").modal('hide');
+          });
+            $("#botao-cancelar-sucesso").click(function() {
+            $("#modalSucesso").modal('hide');
+          });
+      });
+    }
+//////////////MODAL ERRO////////////////
+    if (status_toast == 'erro') {
+      $(document).ready(function(){
+            $("#modalErro .modal-dialog .modal-content .modal-body p").text(mensagem_toast);
+            $("#modalErro").modal('show');
+
+            $("#botao-fechar-erro").click(function() {
+            $("#modalErro").modal('hide');
+          });
+            $("#botao-cancelar-erro").click(function() {
+            $("#modalErro").modal('hide');
+          });
+      });
+    }
+
+//////////////MODAL WARNING////////////////
+    if (status_toast === 'warning') {
+      $("#modalWarning .modal-dialog .modal-content .modal-body p").text(mensagem_toast);
+      $(document).ready(function(){
+            $("#modalWarning").modal('show');
+
+            $("#botao-fechar-warning").click(function() {
+            $("#modalWarning").modal('hide');
+          });
+            $("#botao-cancelar-warning").click(function() {
+            $("#modalWarning").modal('hide');
+          });
+      });
+    }
+
+
+  ///////////////////TREINANDO SPINNER/////////////
+    var spinner = document.getElementById('spinner');
+    var spinnerButton = document.querySelector('[data-bs-toggle="spinner"]');
+
+  spinnerButton.addEventListener('click', function() {
+    var isLoading = spinner.style.display !== 'none';
+
+    spinner.style.display = isLoading ? 'none' : 'inline-block';
+    spinnerButton.style.display = isLoading ? 'inline-block' : 'none';
+    spinnerButton.disabled = isLoading;
+  });
+
+</script>
+</html>

@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="en" style="vh-100 vw-100">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Make or Brake</title>
+
+    <!-- fontawesome -->
+    <script src="https://kit.fontawesome.com/a9a5c39036.js" crossorigin="anonymous"></script>
+
+    <!-- GOOGLE FONTS -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Josefin+Sans&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Signika+Negative&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Righteous&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&display=swap" rel="stylesheet">
+
+    <!-- jquery -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+    <!-- bootstrap -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
+
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'css/styles.css' %}">
+</head>
+
+<style>
+    body {
+      background: #007bff;
+      background: linear-gradient(to right, #0062E6, #33AEFF);
+    }
+
+    .btn-login {
+      font-size: 0.9rem;
+      letter-spacing: 0.05rem;
+      padding: 0.75rem 1rem;
+    }
+
+</style>
+<body>
+  <div class="container">
+
+	  <div class="row">
+
+		  <div class="col-sm-9 col-md-7 col-lg-5 mx-auto">
+			<div class="card border-0 shadow rounded-3 my-5">
+			  <div class="card-body p-4 p-sm-5">
+                <h1 class="card-title text-center mb-5 fw-light " style="font-family: 'Bebas Neue', cursive; font-size: 60px">MAKE OR BREAK</h1>
+				<h5 class="card-title text-center mb-5 fw-light fs-5">Entrar</h5>
+				<form action="{% url 'enter' %}" method="post">
+                    {% csrf_token %}
+				  <div class="form-floating mb-3">
+					<input type="text" class="form-control" id="inputUser" name="inputUser" placeholder="ex:garotagalatica10">
+					<label for="inputUser">Username</label>
+				  </div>
+				  <div class="form-floating mb-3">
+					<input type="password" class="form-control" id="inputPwd" name="inputPwd" placeholder="senha">
+					<label for="inputPwd">Senha</label>
+				  </div>
+
+				  <div class="d-grid">
+					<button class="btn btn-primary btn-login text-uppercase fw-bold" type="submit">Entrar <i class="fa-sharp fa-solid fa-right-to-bracket fa-beat-fade"></i></button>
+				  </div>
+
+				</form>
+			  </div>
+                <a href="{% url 'register' %}" class="btn btn-dark" style="font-family: 'Poppins', sans-serif; padding: 15px; margin: 10px">É novo? Cadastre-se</a>
+			</div>
+		  </div>
+
+	  </div>
+  </div>
+</body>
+
+</div>
+
+
+
+
+
+
+
+
+    {% include 'auth/authSucesso.html' %}
+    {% include 'auth/authErro.html' %}
+    {% include 'auth/authWarning.html' %}
+</body>
+
+<script>
+
+    const urlParams = new URLSearchParams(window.location.search);
+    const mensagem_toast = urlParams.get('mensagem_toast');
+
+
+    //////////////MODAL SUCESSO////////////////
+    if (mensagem_toast == 'authSucesso') {
+      $(document).ready(function(){
+            $("#authSucesso").modal('show');
+
+            $("#botao-fechar-authSucesso").click(function() {
+            $("#authSucesso").modal('hide');
+          });
+            $("#botao-cancelar-authSucesso").click(function() {
+            $("#authSucesso").modal('hide');
+          });
+      });
+    }
+//////////////MODAL ERRO////////////////
+    if (mensagem_toast === 'authErro') {
+      $(document).ready(function(){
+            $("#authErro").modal('show');
+
+            $("#botao-fechar-authErro").click(function() {
+            $("#authErro").modal('hide');
+          });
+            $("#botao-cancelar-authErro").click(function() {
+            $("#authErro").modal('hide');
+          });
+      });
+    }
+
+//////////////MODAL WARNING////////////////
+    if (mensagem_toast === 'authWarning') {
+      $(document).ready(function(){
+            $("#authWarning").modal('show');
+
+            $("#botao-fechar-authWarning").click(function() {
+            $("#authWarning").modal('hide');
+          });
+            $("#botao-cancelar-authWarning").click(function() {
+            $("#authWarning").modal('hide');
+          });
+      });
+    }
+
+</script>
+
+</html>

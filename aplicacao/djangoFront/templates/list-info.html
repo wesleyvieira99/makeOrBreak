@@ -1,0 +1,129 @@
+{% extends "index.html" %}
+
+{% block content %}
+    <div class="col-sm-12 col-xs-12 col-md-12 col-lg-12" style="justify-content: center; text-align: center">
+
+        <div class="row" style=" justify-content: right; text-align: right">
+            <div class="container-fluid" style=" justify-content: right; text-align: right">
+                        <a href="{% url 'metricsTrainSelected' %}"  style="font-family: 'Signika Negative', sans-serif;font-size: 0.8em" type="button" class="mt-5 btn btn-info mb-5"><i class="fa-solid fa-backward-step"></i> Voltar</a>
+                        <a href="{% url 'download_csv' request.resolver_match.kwargs.id %}"  style="font-family: 'Signika Negative', sans-serif; font-size: 0.8em" type="button" class="mt-5 btn btn-success mb-5"><i class="fa-solid fa-file-csv" style="color: #ffffff; margin-left:2%;"></i> Baixar arquivo CSV</a>
+                        <button type="button" id="excluir-itens" class="btn btn-danger" style="font-family: 'Signika Negative', sans-serif; font-size: 0.8em"><i class="fa-solid fa-trash"></i> Excluir Selecionados</button>
+            </div>
+        </div>
+
+        <div class="row" style=" justify-content: center; text-align: center">
+                    <h4 style="font-family: 'Bebas Neue', cursive; justify-content: center; text-align: center" >Lista de informações</h4>
+                    <table class="table table-striped datatable" style="margin: 0 auto; border-collapse: collapse; overflow-x: auto; padding: 10px; width: 80%; max-width: 1000px;" >
+                    <thead class="thead-dark">
+                        <tr>
+                            <th scope="col" style="font-family: 'Bebas Neue', cursive; font-size: 25px; justify-content: center; text-align: center" >Valor</th>
+                            <th scope="col" style="font-family: 'Bebas Neue', cursive; font-size: 25px; justify-content: center; text-align: center">Decisao</th>
+                            <th scope="col" style="font-family: 'Bebas Neue', cursive; font-size: 25px; justify-content: center; text-align: center">Tempo</th>
+                            <th scope="col" style="font-family: 'Bebas Neue', cursive; font-size: 25px; justify-content: center; text-align: center">Usuário que cadastrou</th>
+                            <th scope="col" style="font-family: 'Bebas Neue', cursive; font-size: 25px; justify-content: center; text-align: center; color: #DC143C">Excluir</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for i in infoMetrics %}
+                        <tr style="height: 100%;">
+                            <td style="font-family: 'Signika Negative', sans-serif; font-size: 1.0em; justify-content: center; text-align: center">{{ i.valor }}</td>
+                            <td style="font-family: 'Signika Negative', sans-serif; font-size: 1.0em; justify-content: center; text-align: center">{{ i.decisao }}</td>
+                            <td style="font-family: 'Signika Negative', sans-serif; font-size: 1.0em; justify-content: center; text-align: center">{{ i.tempo }}</td>
+                            <td style="font-family: 'Signika Negative', sans-serif; font-size: 1.0em; justify-content: center; text-align: center">{{ i.cadastrado_por }}</td>
+                            <td style="justify-content: center; text-align: center">
+                                <form id="excluir-form" method="post" action="{% url 'excluirInfos' %}">
+                                    {% csrf_token %}
+                                    <input style="width: 1.5em; height: 1.5em;" type="checkbox" name="exclude_ids" value="{{ i.id }}" class="item-checkbox">
+                                </form>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+        </div>
+    </div>
+
+
+<style>
+    .dataTables_wrapper .dataTables_filter {
+        display: none; /* Oculta a barra de input de search do DataTables*/
+    }
+</style>
+
+<script>
+
+
+
+/////////////DATA TABLES///////////////
+
+        $(document).ready(function() {
+        $('.datatable').DataTable({
+            "paging": false,
+            "order": [[0, "asc"], [1, "asc"]],
+            "language": {
+                "search": "",
+                "info": "",
+                "infoEmpty": "",
+                "infoFiltered": false,
+                "emptyTable": "Nenhum resultado encontrado"
+            },
+            "columnDefs": [
+                { "orderable": false, "targets": [4] },
+                { "searchable": false, "targets": [4] }
+            ]
+        });
+    });
+
+
+  ///////////////////TREINANDO SPINNER/////////////
+    var spinner = document.getElementById('spinner');
+    var spinnerButton = document.querySelector('[data-bs-toggle="spinner"]');
+
+  spinnerButton.addEventListener('click', function() {
+    var isLoading = spinner.style.display !== 'none';
+
+    spinner.style.display = isLoading ? 'none' : 'inline-block';
+    spinnerButton.style.display = isLoading ? 'inline-block' : 'none';
+    spinnerButton.disabled = isLoading;
+  });
+
+/////////////EXCLUIR ITENS///////////////
+       function obterIDDaURLAtual() {
+    var url = window.location.pathname;
+    var partes = url.split('/');
+    var id = partes[partes.length - 1];
+    return id;
+}
+
+$(document).ready(function() {
+    $('#excluir-itens').click(function() {
+
+            var selecionados = [];
+
+            $('.item-checkbox:checked').each(function() {
+                selecionados.push($(this).val());
+            });
+
+            var id = obterIDDaURLAtual();
+
+            //adicionando dados ao form
+            $('<input>').attr({
+                type: 'hidden',
+                name: 'valores_selecionados',
+                value: selecionados.join(',')
+            }).appendTo('#excluir-form');
+
+            $('<input>').attr({
+                type: 'hidden',
+                name: 'metrica_id',
+                value: id
+            }).appendTo('#excluir-form');
+
+            // Enviar o form
+            $('#excluir-form').submit();
+    });
+});
+
+    </script>
+
+{% endblock %}

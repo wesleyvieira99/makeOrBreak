@@ -1,0 +1,68 @@
+<!-- Modal -->
+<div class="modal fade" id="modalTrain" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLabel" style="font-family: 'Bebas Neue',  cursive;">Adicionar dados à métrica</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close" id="botao-fechar-informar">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <div class="card-body">
+                <form action="{% url 'infomodal' %}" method="post" class="form-group" id="TrainFormHTML" style="padding: 15px">
+                    {% csrf_token %}
+                    {% for field in formTrain %}
+                        {% if field.name == "metrica" %}
+                            <label for="{{ field.name }}" class="metricaId" style="font-family: 'Poppins', sans-serif;">{{ field.label_tag }}</label>
+                            <input type="number" name="{{ field.name }}" class="form-control metricaId" readonly>
+                        {% elif field.name == "valor"%}
+                            <label for="{{ field.name }}" style="font-family: 'Poppins', sans-serif; margin-top: 15px">{{ field.label_tag }}</label>
+                            <div class="input-group">
+                              <input type="number" name="{{ field.name }}" class="form-control" min="0" id="input-valor-info">
+                              <select name="{{ field.name }}_type" class="form-control" id="select-valor-info">
+                                <option value="quantidade">Quantidade</option>
+                                <option value="porcentagem">Porcentagem</option>
+                              </select>
+                            </div>
+
+                        {% elif field.name == "tempo"%}
+                            <label for="{{ field.name }}" style="font-family: 'Poppins', sans-serif; margin-top: 6px">{{ field.label_tag }}</label>
+                            <div class="input-group">
+                              <input type="number" name="{{ field.name }}" class="form-control" min="0" id="input-tempo-info" placeholder="em minutos...">
+                            </div>
+
+                        {% elif field.name == "decisao"%}
+                            <label for="{{ field.name }}" style="font-family: 'Poppins', sans-serif; margin-top: 15px">{{ field.label_tag }}</label>
+                            <select name="{{ field.name }}" class="form-control">
+                                    <option value="1" >Faria o rollback</option>
+                                    <option value="0" >Não faria o rollback</option>
+                            </select>
+                        {% elif field.name == "cadastrado_por"%}
+                            <label for="{{ field.name }}" style="display:none; font-family: 'Poppins', sans-serif; margin-top: 15px">{{ field.label_tag }}</label>
+                            <input type="text" name="{{ field.name }}" class="form-control" style="display:none" value="{{user.id}}">
+                        {% else %}
+                            <label for="{{ field.name }}" style="  font-family: 'Poppins', sans-serif; margin-top: 15px">{{ field.label_tag }}</label>
+                            <input type="text" name="{{ field.name }}" class="form-control">
+                        {% endif %}
+                        {% if field.name != "metrica" %}
+                            {% if field.errors %}
+                                {% for error in field.errors %}
+                                    <div class="alert alert-danger" role="alert" style="margin-top: 12px">
+                                        <span>{{ error }}</span>
+                                    </div>
+                                {% endfor %}
+                            {% endif %}
+                        {% endif %}
+                    {% endfor %}
+                    <button type="submit" class="btn btn-primary" id="botao-informar" style="font-family: 'Poppins', sans-serif;padding: 10px; margin-top:15px;">Pronto!</button>
+                </form>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal" id="botao-cancelar-informar" style="font-family: 'Poppins', sans-serif;">Cancelar</button>
+      </div>
+    </div>
+  </div>
+</div>
+

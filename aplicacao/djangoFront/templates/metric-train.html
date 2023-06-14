@@ -1,0 +1,274 @@
+{% extends "index.html" %}
+
+{% block content %}
+
+    {% if not selectedProject %}
+    <div class="col-sm-12 col-xs-12 col-md-12 col-lg-12" style="left: 25%">
+        <div class="card mt-3" style="width: 50%;">
+            <div class="card-body vw-30" style="box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3), 0 0 8px rgba(128, 128, 128, 0.3); border-radius: 4px; justify-content: center; text-align: center;">
+                <form class="form-group" action="{% url 'metricsTrainSelected' %}" method="post">
+                    {% csrf_token %}
+                    <label for="formProject" style="font-size: 2em; font-family: 'Poppins', sans-serif;">Selecione um <strong>projeto</strong>:</label>
+                    <select id="formProject" class="form-control" name="formProject">
+                        {% for project in projects %}
+                        <option value="{{ project.id }}">{{ project.nome }}</option>
+                        {% endfor %}
+                    </select>
+                    <button type="submit" class="btn btn-success" style="padding: 10px; margin-top:15px; font-family: 'Poppins', sans-serif;">Selecionar projeto</button>
+                </form>
+            </div>
+        </div>
+    </div>
+    {% else %}
+    <div class="col-sm-4 col-xs-4 col-md-4 col-lg-4">
+        <div class="card mt-3">
+            <div class="card-body vw-30" style="box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3), 0 0 8px rgba(128, 128, 128, 0.3); border-radius: 4px; justify-content: center; text-align: center;">
+                    <h4 style="font-family: 'Bebas Neue', cursive; justify-content: center;font-size: 4em; text-align: center white-space: nowrap; overflow: hidden; text-overflow: ellipsis;" class="mt-3" >{{ completeProject.nome }}</h4>
+                    <form class="form-group" action="{% url 'metric-train' %}" method="post">
+                        {% csrf_token %}
+                        <button type="submit" class="btn btn-primary" style="padding: 10px; margin-top:15px; font-family: 'Poppins', sans-serif; font-size: 80% "><i class="fa-solid fa-rotate fa-spin"></i> Trocar projeto</button>
+                    </form>
+            </div>
+        </div>
+        <div class="card mt-3">
+                <div class="card-body vw-30" style="box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3), 0 0 8px rgba(128, 128, 128, 0.3); border-radius: 4px; justify-content: center; text-align: center;">
+                     <div class="container-fluid" style="margin-top: 2%; justify-content: center; text-align: center">
+                         <h4 style="font-family: 'Bebas Neue', cursive; justify-content: center;font-size: 2em; text-align: center" >Filtro</h4>
+                         <form method="post" action="{% url 'metricsTrainSelected' %}"  class="form-group" id="form-filtro">
+                             {% csrf_token %}
+                             {% for field in typeFilter.form %}
+                             <div class="form-group" style="padding-bottom: 5px">
+                                 {% if field.name == 'nome' %}
+                                    <label for="formName" style="font-family: 'Poppins', sans-serif;">{{ field.name }}</label>
+                                    <input type="text" class="form-control filtro"  name="formName" placeholder="contém...">
+                                 {% endif %}
+                             </div>
+                             {% endfor %}
+                             <button type="submit" name="plus" value="plus_button" class="btn btn-primary"><i class="fa-solid fa-magnifying-glass-plus fa-fade"></i></button>
+                             <button type="submit" name="minus" value="minus_button" class="btn btn-warning"><i class="fa-solid fa-magnifying-glass-minus fa-beat-fade"></i></button>
+                         </form>
+                         <div style="justify-content: center; text-align: center">
+                            <a type="button" class="btn btn-success" href="{%url 'metric-create' %}" style="margin-top: 15px; padding:10px; font-family: 'Signika Negative', sans-serif;   background-image: linear-gradient(to left top, #080633, #07175b, #0c2487, #1432b5, #2040e5);"><i class="fa-solid fa-bolt" ></i> Criar métrica</a>
+                            <button type="button" class="btn btn-info informar-csv" style="margin-top: 15px; padding:10px; font-family: 'Signika Negative', sans-serif;  background-image: linear-gradient(to right top, #093663, #102a4c, #111f36, #0e1422, #01030d);" data-toggle="modal" data-target="#modalCSV" data-id="{{ i.id }}"><i class="fa-solid fa-file-csv" style="color: #ffffff; margin-left:2%; font-size: 20px"></i> Dados em lote </button>
+                        </div>
+                     </div>
+                </div>
+        </div>
+    </div>
+    <div class="col-sm-8 col-xs-8 col-md-8 col-lg-8">
+        <div class="card mt-3">
+                <div class="card-body vw-30" style="box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3), 0 0 8px rgba(128, 128, 128, 0.3); border-radius: 4px; justify-content: center; text-align: center;">
+                    <div class="container-fluid mt-1" style="padding: 5%;">
+                            <div class="pagination">
+                                {% if metrics_paginadas.has_previous %}
+                                <a href="?pagina={{ metrics_paginadas.previous_page_number }}" class="btn btn-outline-warning" style="margin-right: 15px;"><i class="fa-solid fa-backward fa-fade"></i></a>
+                                {% endif %}
+
+                                {% if metrics_paginadas.has_next %}
+                                <a href="?pagina={{ metrics_paginadas.next_page_number }}" class="btn btn-outline-info"><i class="fa-solid fa-forward fa-bounce"></i></a>
+                                {% endif %}
+
+                                <span class="badge text-bg-primary current-page" style="margin-left: 5%; justify-content: center; text-align: center; font-family: font-family: 'Poppins', sans-serif; padding-top: 10px; color: black; font-size:0.7em">Página atual: {{ metrics_paginadas.number }} de {{ metrics_paginadas.paginator.num_pages }}</span>
+                            </div>
+                    </div>
+
+                    <div class="container-fluid" style="overflow-x: auto" >
+                        <h4 style="font-family: 'Bebas Neue',  cursive; justify-content: center; text-align: center" >Lista de métricas</h4>
+                        <table class="table table-striped datatable" style="margin: 0 auto; border-collapse: collapse; overflow-x: auto; padding: 10px; width: 100%; max-width: 1000px;" >
+                            <thead class="thead-dark">
+                                <tr>
+                                    <th scope="col" style="font-family: 'Bebas Neue', cursive; font-size: 25px; justify-content: center; text-align: center">Métrica</th>
+                                    <th scope="col" style="font-family: 'Bebas Neue', cursive; font-size: 25px; justify-content: center; text-align: center">Origem</th>
+                                    <th scope="col" style="font-family: 'Bebas Neue', cursive; font-size: 25px; justify-content: center; text-align: center">Ação</th>
+                                    <th scope="col" style="font-family: 'Bebas Neue', cursive; font-size: 25px; justify-content: center; text-align: center">Informações fornecidas</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for i in metrics_paginadas %}
+                                <tr style="height: 100%;">
+                                    <td style="font-family: 'Signika Negative', sans-serif; font-size: 1.0em; justify-content: center; text-align: center">{{ i.nome }}</td>
+                                    <td style="font-family: 'Signika Negative', sans-serif; font-size: 1.0em; justify-content: center; text-align: center">{{ i.origin__nome }}</td>
+                                    <td style="justify-content: center; text-align: center">
+                                        <button type="button" class="btn btn-md btn-primary informar-metrica"  style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis;font-family: 'Signika Negative', sans-serif; width: 90%; height: 2.3em; font-size: 1em; margin: 4px" data-toggle="modal" data-target="#modalTrain" data-id="{{i.id}}"><i class="fa-solid fa-dumbbell"></i> Inserir dados </button>
+                                        <button class="btn btn-md btn-danger deletar-metrica" style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis;font-family: 'Signika Negative', sans-serif; margin: 4px; width: 90%; height: 2.3em; font-size: 1em; " data-toggle="modal" data-target="#modal-deletar-metrica" data-id="{{ i.id }}" id="botao-deletar-metrica-{{ i.id }}"><i class="fa-solid fa-trash "></i> Deletar métrica</button>
+                                    </td>
+
+                                    <td style="justify-content: center; text-align: center">
+                                        {% for count in metricsIdcount %}
+                                            {% if count.metrica_id == i.id %}
+                                                <p style="font-family: 'Righteous', cursive; font-size: 1.5em;">{{ count.total }}</p>
+                                                <a href="{% url 'list-info'  i.id %}" type="button" class="btn btn-info"><i class="fa-solid fa-eye" style="color: #ffffff;"></i></a>
+                                            {% endif %}
+                                        {% endfor %}
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+        </div>
+    </div>
+    {% endif %}
+
+
+
+    {% include 'modalDeleteMetric.html' %}
+    {% include 'modalAddMetricValue.html' %}
+    {% include 'modalCSV.html' %}
+
+
+
+<style>
+    .dataTables_wrapper .dataTables_filter {
+        display: none; /* Oculta a barra de input de search do DataTables*/
+    }
+</style>
+
+<script>
+
+
+    /////////////DATA TABLES///////////////
+
+        $(document).ready(function() {
+        $('.datatable').DataTable({
+            "paging": false,
+            "order": [[0, "asc"]],
+            "language": {
+                "search": "",
+                "info": "",
+                "infoEmpty": "",
+                "infoFiltered": false,
+                "emptyTable": "Nenhum resultado encontrado"
+            },
+            "columnDefs": [
+                { "orderable": false, "targets": [2,3] },
+                { "searchable": false, "targets": [2,3] }
+            ]
+        });
+    });
+
+
+    $(document).ready(function() {
+      // Quando o botão "Deletar" for clicado, configuramos o ID do item a ser deletado no modal
+      $(".deletar-metrica").click(function() {
+        var id = $(this).data("id");
+        $("#modal-deletar-metrica").data("id", id);
+        $("#modal-deletar-metrica").modal('show');
+      });
+
+      // Quando o botão "Treinar" for clicado, configuramos o ID do item a ser treinado no modal
+      $(".informar-metrica").click(function() {
+        var id = $(this).data("id");
+        $("#modalTrain").find('.metricaId').val(id); // Preenche o valor do campo
+        $('.metricaId').hide();
+        $("#modalTrain").modal('show');
+      });
+
+
+    /////////////INFORMAR///////////////
+      $("#botao-fechar-informar").click(function() {
+        $("#modalTrain").modal('hide');
+      });
+
+      $("#botao-cancelar-informar").click(function() {
+        $("#modalTrain").modal('hide');
+      });
+
+   /////////////CSV///////////////
+      $("#botao-fechar-csv").click(function() {
+        $("#modalCSV").modal('hide');
+      });
+
+      $("#botao-cancelar-csv").click(function() {
+        $("#modalCSV").modal('hide');
+      });
+
+      var id = $(this).data("id");
+        $("#modalCSV").data("id", id);
+
+      $(document).ready(function() {
+          $(".informar-csv").click(function() {
+            $("#modalCSV").modal('show');
+          });
+      });
+
+
+
+////////////DELETAR METRICA//////////////////
+        $("#botao-cancelar-deletar").click(function() {
+            $("#modal-deletar-metrica").modal('hide');
+         });
+
+
+         $("#botao-fechar-deletar").click(function() {
+            $("#modal-deletar-metrica").modal('hide');
+         });
+
+          // Quando o botão "Deletar" for clicado no modal, fazemos uma requisição AJAX para deletar o item
+          $("#botao-deletar").click(function() {
+            var id = $("#modal-deletar-metrica").data("id");
+            $.ajax({
+              url: "/metric-delete/" + id,
+              type: "POST",
+              data: {
+                csrfmiddlewaretoken: "{{ csrf_token }}"
+              },
+              success: function(data) {
+                // Se a requisição for bem sucedida, recarregamos a página
+                 window.location.href = 'metric-train?mensagem_toast=sucesso';
+              },
+              error: function(xhr, status, error) {
+                // Se a requisição falhar, exibimos uma mensagem de erro
+                alert("Não foi possível deletar a métrica. Tente novamente.");
+              }
+            });
+          });
+    });
+
+
+    //////////FILTRO RESET//////////////
+  function clearFilter() {
+    var filtroInputs = document.getElementsByClassName("filtro");
+    for (var i = 0; i < filtroInputs.length; i++) {
+      filtroInputs[i].value = '';
+    }
+    document.getElementById('form-filtro').submit();
+  }
+
+  ////////////INFORMAÇÃO VALOR QUANTIDADE OU PORCENTAGEM //////////////
+  const input = document.getElementById('input-valor-info');
+  const select = document.getElementById('select-valor-info');
+
+  select.addEventListener('change', function() {
+    if (select.value === 'porcentagem') {
+      input.setAttribute('max', '100');
+       input.value = '0';
+    } else {
+      input.removeAttribute('max');
+    }
+  });
+
+  input.addEventListener('input', function() {
+    if (select.value === 'porcentagem') {
+      const value = Math.min(Math.max(input.value, 0), 100);
+      input.value = value;
+    }
+  });
+
+  ///////////////////TREINANDO SPINNER/////////////
+    var spinner = document.getElementById('spinner');
+    var spinnerButton = document.querySelector('[data-bs-toggle="spinner"]');
+
+  spinnerButton.addEventListener('click', function() {
+    var isLoading = spinner.style.display !== 'none';
+
+    spinner.style.display = isLoading ? 'none' : 'inline-block';
+    spinnerButton.style.display = isLoading ? 'inline-block' : 'none';
+    spinnerButton.disabled = isLoading;
+  });
+
+    </script>
+
+
+{% endblock %}

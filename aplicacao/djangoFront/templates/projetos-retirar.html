@@ -1,0 +1,30 @@
+<!-- Modal -->
+<div class="modal fade" id="modalRetirar" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLabel" style="font-family: 'Bebas Neue',  cursive;">Retirar usuários do projeto <strong class="nomeProjeto"></strong> </h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close" id="botao-fechar-retirar">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <div class="card-body">
+                <form method="post" action="{% url 'usuarioprojetoretirar' %}">
+                    {% csrf_token %}
+                    <input type="hidden" name="project_id" class="project">
+                    <label for="userselect" style="font-family: 'Signika Negative', sans-serif;">Selecione o usuário:</label>
+                    <select id="userselect" name="userselect" style="font-family: 'Signika Negative', sans-serif;" class="form-control">
+                    </select>
+                    <button type="submit" class="btn btn-md btn-warning" style="margin: 5%; font-family: 'Signika Negative', sans-serif;">Retirar usuário do projeto</button>
+                </form>
+
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal" style="font-family: 'Signika Negative', sans-serif;" id="botao-cancelar-retirar">Cancelar</button>
+      </div>
+    </div>
+  </div>
+</div>
+

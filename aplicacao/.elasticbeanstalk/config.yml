@@ -1,0 +1,17 @@
+branch-defaults:
+  master:
+    environment: mbreak-dev
+global:
+  application_name: mbreak
+  branch: null
+  default_ec2_keyname: makeOrBrakeKP
+  default_platform: Python 3.8 running on 64bit Amazon Linux 2
+  default_region: us-east-1
+  include_git_submodules: true
+  instance_profile: null
+  platform_name: null
+  platform_version: null
+  profile: null
+  repository: null
+  sc: git
+  workspace_type: Application

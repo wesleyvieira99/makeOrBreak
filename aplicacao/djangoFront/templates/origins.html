@@ -1,0 +1,242 @@
+{% extends "index.html" %}
+
+
+{% block content %}
+
+<div class="col-sm-12 col-xs-12 col-md-12 col-lg-12">
+
+    <div class="container-fluid" style="margin-top: 2%; justify-content: center; text-align: center">
+        <div class="alert alert-info mb-4" role="alert" style="font-family: 'Poppins', sans-serif;font-size:0.8em ">
+                Criação de origens para serem usadas como fonte de dados das métricas cadastradas pelos usuários
+        </div>
+        <div class="card-body" style="margin: 0 auto; border-collapse: collapse; overflow-x: auto;justify-content: center; text-align: center;box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3), 0 0 8px rgba(128, 128, 128, 0.3); border-radius: 4px;">
+
+            <table class="table table-striped datatable" style="margin: 0 auto; border-collapse: collapse; overflow-x: auto; padding: 10px; width: 100%;" >
+                        <thead class="thead-dark">
+                            <tr>
+                                <th scope="col" style="font-family: 'Bebas Neue', cursive; font-size: 1.5em; justify-content: center; text-align: center" >Nome</th>
+                                <th scope="col" style="font-family: 'Bebas Neue', cursive; font-size: 1.5em; justify-content: center; text-align: center">Tecnologia</th>
+                                <th scope="col" style="font-family: 'Bebas Neue', cursive; font-size: 1.5em; justify-content: center; text-align: center">Endpoint</th>
+                                <th scope="col" style="font-family: 'Bebas Neue', cursive; font-size: 1.5em; justify-content: center; text-align: center">Responsável</th>
+                                <th scope="col" style="font-family: 'Bebas Neue', cursive; font-size: 1.5em; justify-content: center; text-align: center">Ações</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for o in origins %}
+                            <tr style="height: 100%;">
+                                <td style="font-family: 'Signika Negative', sans-serif; font-size: 0.8em; justify-content: center; text-align: center">{{ o.nome }}</td>
+                                <td style="font-family: 'Signika Negative', sans-serif; font-size: 0.8em; justify-content: center; text-align: center">{{ o.tecnologia }}</td>
+                                <td style="font-family: 'Signika Negative', sans-serif; font-size: 0.8em; justify-content: center; text-align: center">{{ o.endpoint }}</td>
+                                <td style="font-family: 'Signika Negative', sans-serif; font-size: 0.8em; justify-content: center; text-align: center">{{ o.responsavel }}</td>
+                                <td style="justify-content: center; text-align: center">
+                                    <button type="button" class="btn btn-sm btn-danger excluir-origem" style="font-family: 'Signika Negative', sans-serif; width: 30%; height: 2.3em; font-size: 1em; margin: 4px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;" data-toggle="modal" data-target="#modalExcludeOrigin" data-id="{{ o.id }}"><i class="fa-solid fa-trash"></i></button>
+                                    <button type="button" class="btn btn-sm btn-info ver-metricas-origem" style="font-family: 'Signika Negative', sans-serif; width: 30%; height: 2.3em; font-size: 1em; margin: 4px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;" data-toggle="modal" data-target="#modalViewMetricOrigin" data-id="{{ o.id }}"><i class="fa-solid fa-eye" style="color: #ffffff;"></i></button>
+                                </td>
+                            </tr>
+
+                            {% endfor %}
+                        </tbody>
+            </table>
+        </div>
+
+            <div class="container-fluid" style="position: fixed; top: 80%; left:60%;  width: 50%; height: 200px; z-index: 9999; justify-content: center; text-align: center">
+                <button type="button" class="btn btn-sm btn-info add-origin" style="font-family: 'Signika Negative', sans-serif; width: 30%; height: 2.3em; font-size: 1em; margin: 4px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;" data-toggle="modal" data-target="#modalAddOrigin"><i class="fa-solid fa-plus"></i> Adicionar Origem</button>
+            </div>
+
+    </div>
+
+
+
+</div>
+
+
+
+
+
+
+
+    {% include 'view-metric-origin-modal.html' %}
+    {% include 'exclude-origin.html' %}
+    {% include 'add-origin.html' %}
+
+<style>
+    .dataTables_wrapper .dataTables_filter {
+        display: none; /* Oculta a barra de input de search do DataTables*/
+    }
+</style>
+
+
+<script>
+
+     /////////////VIEW METRIC ORIGIN///////////////
+
+
+    $(document).ready(function() {
+          $(".ver-metricas-origem").click(function() {
+              var id = $(this).data("id");
+              console.log(id)
+              var url = "/viewmetricsorigin/" + id;
+              console.log(url)
+
+              $.ajax({
+                url: url,
+                type: "GET",
+                dataType: "json",
+                success: function(response) {
+                  var bodyTable = $('#list-infos-metrics-origin');
+                  bodyTable.empty();
+
+                  response.forEach(function(metric) {
+                    var trElement = document.createElement('tr');
+
+                    var tdMetricName = document.createElement('td');
+                    $(tdMetricName).text(metric.metric_name);
+                    trElement.append(tdMetricName);
+
+                    var tdProjectName = document.createElement('td');
+                    $(tdProjectName).text(metric.project_name);
+                    trElement.append(tdProjectName);
+
+                    var countDados = document.createElement('td');
+                    $(countDados).text(metric.countDados);
+                    trElement.append(countDados);
+
+
+                    bodyTable.append(trElement);
+
+                  });
+                },
+                error: function(xhr, status, error) {
+                  console.log(error);
+                }
+              });
+
+            $("#modalViewMetricOrigin").modal('show');
+          });
+
+          $("#botao-fechar-view-metric-origin").click(function() {
+            $("#modalViewMetricOrigin").modal('hide');
+          });
+
+          $("#botao-cancelar-view-metric-origin").click(function() {
+            $("#modalViewMetricOrigin").modal('hide');
+          });
+    });
+
+
+/////////////ADD ORIGINS///////////////
+
+
+
+
+    $(document).ready(function() {
+          $(".add-origin").click(function() {
+            $("#modalAddOrigin").modal('show');
+            $(".add-origin").hide();
+          });
+
+          $("#botao-fechar-add-origin").click(function() {
+            $("#modalAddOrigin").modal('hide');
+            $(".add-origin").show();
+          });
+
+          $("#modalAddOrigin").on('hidden.bs.modal', function() {
+            $(".add-origin").show();
+          });
+
+          $("#botao-cancelar-add-origin").click(function() {
+            $("#modalAddOrigin").modal('hide');
+            $(".add-origin").show();
+          });
+    });
+
+    /////////////EXCLUDE OPTIONS///////////////
+
+
+    $(document).ready(function() {
+          $(".excluir-origem").click(function() {
+            var id = $(this).data("id");
+            $(".originId").val(id);
+            $("#modalExcludeOrigin").modal('show');
+          });
+
+          $("#botao-fechar-origin").click(function() {
+            $("#modalExcludeOrigin").modal('hide');
+          });
+
+          $("#botao-cancelar-origin").click(function() {
+            $("#modalExcludeOrigin").modal('hide');
+          });
+    });
+
+
+    /////////////CHECKED ALTERNATE OPCOES EXCLUSAO///////////////
+
+        function handleCheckboxChange(checkbox, otherCheckboxName, currentDivId, otherDivId) {
+
+          var otherCheckbox = document.getElementsByName(otherCheckboxName)[0];
+
+          if (checkbox.checked) {
+            otherCheckbox.checked = false;
+          } else {
+            // Verificar se há pelo menos uma opção marcada
+            var checkboxes = document.querySelectorAll('input[type="checkbox"][name="' + otherCheckboxName + '"]');
+            var checkedCount = 0;
+            checkboxes.forEach(function(cb) {
+              if (cb.checked) {
+                checkedCount++;
+              }
+            });
+
+            if (checkedCount === 0) {
+              checkbox.checked = true;
+              return;
+            }
+          }
+
+          var currentDiv = document.getElementById(currentDivId);
+          var otherDiv = document.getElementById(otherDivId);
+
+          if (checkbox.checked) {
+            currentDiv.style.display = 'block';
+            otherDiv.style.display = 'none';
+          } else {
+            currentDiv.style.display = 'none';
+          }
+    }
+
+
+
+    /////////////DATA TABLES///////////////
+
+        $(document).ready(function() {
+        $('.datatable').DataTable({
+            "paging": false,
+            "order": [[0, "asc"], [1, "asc"], [2, "asc"]],
+            "language": {
+                "search": "",
+                "info": "",
+                "infoEmpty": "",
+                "infoFiltered": false,
+                "emptyTable": "Nenhum resultado encontrado"
+            }
+        });
+    });
+
+
+           ///////////////////TREINANDO SPINNER/////////////
+    var spinner = document.getElementById('spinner');
+    var spinnerButton = document.querySelector('[data-bs-toggle="spinner"]');
+
+  spinnerButton.addEventListener('click', function() {
+    var isLoading = spinner.style.display !== 'none';
+
+    spinner.style.display = isLoading ? 'none' : 'inline-block';
+    spinnerButton.style.display = isLoading ? 'inline-block' : 'none';
+    spinnerButton.disabled = isLoading;
+  });
+
+</script>
+
+
+{% endblock %}
