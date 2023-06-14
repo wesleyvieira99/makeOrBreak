@@ -1,0 +1,13 @@
+<<<<<<< HEAD
+
+# Elastic Beanstalk Files
+.elasticbeanstalk/*
+!.elasticbeanstalk/*.cfg.yml
+!.elasticbeanstalk/*.global.yml
+=======
+
+# Elastic Beanstalk Files
+.elasticbeanstalk/*
+!.elasticbeanstalk/*.cfg.yml
+!.elasticbeanstalk/*.global.yml
+>>>>>>> 8a3053658b613e5be4da4d08cc9fce23df81e102
